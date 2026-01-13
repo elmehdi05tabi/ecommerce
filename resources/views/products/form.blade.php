@@ -1,8 +1,19 @@
 @extends('base')
-@section('title','Create Product')
+@section('title',$isUpdate ?'Update':'Create'.' Product')
+@php
+    $route = route('products.store') ; 
+    if($isUpdate) {
+        $route = route('products.update',$product) ;
+    }
+@endphp
 @section('content')
-<form action="{{route('products.store')}}" method="POST" enctype="multipart/form-data">
+<h1>{{$isUpdate ? 'Update':'Create'.' Product'}}</h1>
+<form action="{{$route}}" 
+ method="POST" enctype="multipart/form-data">
     @csrf
+    @if($isUpdate)
+        @method('PUT')
+    @endif
     <div class="mb-3">
         <label for="name" class="form-label">Name</label>
         <input
@@ -12,7 +23,7 @@
             class="form-control"
             placeholder=""
             aria-describedby="helpId"
-            value="{{old('name')}}"
+            value="{{old('name',$product->name)}}"
         />
     </div>
     <div class="mb-3">
@@ -24,7 +35,7 @@
             class="form-control"
             placeholder=""
             aria-describedby="helpId"
-        >{{old('description')}}</textarea>
+        >{{old('description',$product->description)}}</textarea>
     </div>
     <div class="mb-3">
         <label for="name" class="form-label">Quantity</label>
@@ -34,7 +45,7 @@
             id="name"
             class="form-control"
             placeholder=""
-            value="{{old('quantity')}}"
+            value="{{old('quantity',$product->quantity)}}"
             aria-describedby="helpId"
         />
     </div>
@@ -48,13 +59,16 @@
             placeholder=""
             aria-describedby="helpId"
         />
+        @if($product->image)
+        <img src="{{asset('storage/'.$product->image)}}" width="100px" height="100px" alt="">
+        @endif
     </div>
     <div class="mb-3">
         <label for="price" class="form-label">Price</label>
         <input
             type="number"
             name="price"
-            value="{{old('price')}}"
+            value="{{old('price',$product->price)}}"
             id="name"
             class="form-control"
             placeholder=""
@@ -62,7 +76,7 @@
         />
     </div>
      <div class="mb-3 w-100">
-        <button class="btn btn-primary w-100" type="submit">Create Product</button>
+        <button class="btn btn-primary w-100" type="submit">{{$isUpdate ?'Update':'Create'.' Product'}}</button>
     </div>
 </form>
 @endsection

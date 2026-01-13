@@ -14,7 +14,8 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::query()->paginate(2) ; 
-        return view('products.index',compact('products')) ; 
+        // return view('products.index',compact('products')) ; 
+        return response()->json($products) ;
     }
 
     /**
@@ -22,7 +23,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create') ;
+        $isUpdate = false ; 
+        $product = new Product() ; 
+        return view('products.form',compact('isUpdate','product')) ;
     }
 
     /**
@@ -51,7 +54,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('products.edit',compact('product')) ;
+        $isUpdate = true ; 
+        return view('products.form',compact('product','isUpdate')) ;
     }
 
     /**
@@ -62,7 +66,9 @@ class ProductController extends Controller
         $formFields = $request->validated() ; 
         if($request->hasFile('image')) {
             $formFields['image'] = $request->file('image')->store('product','public') ; 
-        }
+        } 
+        $product->fill($formFields)->save(); 
+        return to_route('products.index')->with('success','product updated avec successfuly') ;
     }
 
     /**
